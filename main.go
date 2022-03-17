@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+	"sync"
 )
 
 type Book struct {
@@ -18,11 +19,11 @@ type Book struct {
 	Author    string
 }
 
-func (b Book) SetValues(id int, name string, page, Stock, cost int, stockCode, isbn, author string) Book {
+func (b Book) SetValues(id int, name string, page, stock, cost int, stockCode, isbn, author string) Book {
 	b.ID = id
 	b.Name = name
 	b.Page = page
-	b.Stock = Stock
+	b.Stock = stock
 	b.Cost = cost
 	b.StockCode = stockCode
 	b.ISBN = isbn
@@ -31,6 +32,7 @@ func (b Book) SetValues(id int, name string, page, Stock, cost int, stockCode, i
 }
 
 func main() {
+
 	book1, book2, book3 := Book{}, Book{}, Book{}
 
 	book1 = book1.SetValues(1, "It", 350, 3, 15, "A125-125-CCD", "1235-4645-1243", "Stephan King")
@@ -42,7 +44,7 @@ func main() {
 	books = append(books, book2)
 	books = append(books, book3)
 
-	//names := readFile()
+	mux := &sync.Mutex{}
 
 	flag.String("com", "ss", "Usage")
 	flag.Usage = func() {
@@ -68,7 +70,7 @@ func main() {
 
 	} else if flag.Args()[0] == "buy" {
 
-		buyCommand(books)
+		buyCommand(books, mux)
 
 	} else {
 		usage()
@@ -183,7 +185,7 @@ func deleteCommand(books []Book) {
 }
 
 //buyCommand decrease stock of book has given ID, then prints the book information
-func buyCommand(books []Book) {
+func buyCommand(books []Book, mux *sync.Mutex) {
 	if 4 > len(flag.Args()) && len(flag.Args()) > 2 {
 		id, err := strconv.Atoi(flag.Args()[1])
 		quantity, err2 := strconv.Atoi(flag.Args()[2])
@@ -197,7 +199,9 @@ func buyCommand(books []Book) {
 			if value.ID == id {
 
 				if (value.Stock - quantity) >= 0 {
+					mux.Lock()
 					value.Stock = value.Stock - quantity
+					mux.Unlock()
 					fmt.Printf("\nID: %d, \nName: %s, \nPage %d,\nStock %d,\nCost %d,\nStock Code: %s,\nISBN %s,\nAuthor %s,\n",
 						value.ID, value.Name, value.Page, value.Stock, value.Cost, value.StockCode, value.ISBN, value.Author)
 				} else {
