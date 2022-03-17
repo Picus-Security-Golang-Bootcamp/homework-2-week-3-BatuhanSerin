@@ -99,22 +99,27 @@ func searchCommand(books []Book) {
 		for i := 1; i < len(flag.Args()); i++ {
 			args = args + " " + string(flag.Args()[i])
 		}
-		args = strings.Title(strings.ToLower(args))[1:]
+		args = strings.ToLower(args)[1:]
 
 		flag := []bool{true}
 		for _, value := range books {
 
-			if value.Name == args {
+			if strings.ToLower(value.Name) == args {
 				fmt.Printf("\nThe book is found: %s", value.Name)
 				fmt.Printf("\nID: %d, \nName: %s, \nPage %d,\nStock %d,\nCost %d,\nStock Code: %s,\nISBN %s,\nAuthor %s,\n",
 					value.ID, value.Name, value.Page, value.Stock, value.Cost, value.StockCode, value.ISBN, value.Author)
 				flag[0] = false
-				break
+			} else if strings.Contains(value.Name, args) {
+				fmt.Printf("\n%s includes %s\n", value.Name, args)
+				fmt.Printf("\nID: %d, \nName: %s, \nPage %d,\nStock %d,\nCost %d,\nStock Code: %s,\nISBN %s,\nAuthor %s,\n",
+					value.ID, value.Name, value.Page, value.Stock, value.Cost, value.StockCode, value.ISBN, value.Author)
+				flag[0] = false
 			}
 
 		}
 		if flag[0] {
 			fmt.Println("The book is not found!")
+
 		}
 	} else {
 		fmt.Println("'search' command usage: go run main.go search <bookName>")
