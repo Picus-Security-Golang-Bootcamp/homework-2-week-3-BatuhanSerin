@@ -1,63 +1,32 @@
-## Homework | Week 3
-`Not: Ödevi yeni bir repoya ekleyeceksiniz. Var olan reponuzda bir güncelleme olmayacak. "homework-2..." şeklinde yeni bir repo üzerinde çalışacaksınız.`
+## Book Library
 
+This project made with Golang and contains a list of books.
 
-Elimizde bir kitap listesi var. 
-Kitap alanları şöyle;
-```
-- Kitap ID
-- Kitap Adı
-- Sayfa Sayısı
-- Stok Sayısı
-- Fiyatı
-- Stock Kodu
-- ISBN
-- Yazar bilgisi (ID ve İsim)
-```
+### Usage
 
-1. Tüm kitapları listele (list)
-2. Verilen girdi hangi kitap isimlerinde geçiyorsa o kitapları listele (search)
-3. ID'ye göre kitabı yazdır
-4. IDsi verilen kitabı sil. (Silinen kitabın ID'ye göre geliyor olması gerekiyor.)
-5. IDsi verilen kitabı istenilen adet kadar satın al ve kitabın son bilgilerini ekrana yazdır.
-
-Yanlış komut girildiğinde ekrana usage'ı yazdıracak. 
-
-
-Concurrency ile ilgili medium yazısı yazılacak. 
-
-### list command
-```
+##### 1 - To show the list of books
+```go
 go run main.go list
 ```
-
-### search command 
-```
+##### 2 - To search the book in a list
+```go
 go run main.go search <bookName>
-go run main.go search Lord of the Ring: The Return of the King
 ```
-
-### get command
+The search command is not case sensitive.
+###### Example
+```go
+go run main.go search Requiem For A Dream 
+go run main.go search requiem for a dream
 ```
+##### 3 - To get book information with ID
+```go
 go run main.go get <bookID>
-go run main.go get 5
 ```
-
-### delete command
-```
+##### 4 - To delete book with ID
+```go
 go run main.go delete <bookID>
-go run main.go delete 5
 ```
-
-### buy command
-```
+##### 5 - To buy book with ID
+```go
 go run main.go buy <bookID> <quantity>
-go run main.go buy 5 2
 ```
-
-###
-# Requirements:
-- README
-- No third party package(s)
-- Everything should be in English (Comments, Function names, File names, etc.)
-- Use structs not maps
