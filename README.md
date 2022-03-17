@@ -15,13 +15,13 @@ go run main.go search <bookName>
 The search command is not sensitive.
 ###### Example
 ```go
-go run main.go search Requiem white fang
-go run main.go search requiem WHiTe FanG
+go run main.go search white fang
+go run main.go search WHiTe FanG
 
 ```
 or
 ```go
-go run main.go search requiem hite fa
+go run main.go search hite fa
 ```
 ##### 3 - To get book information with ID
 ```go
