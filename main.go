@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 package main
 
 import (
@@ -19,11 +18,11 @@ type Book struct {
 	Author    string
 }
 
-func (b Book) SetValues(id int, name string, page, stock, cost int, stockCode, isbn, author string) Book {
+func (b Book) SetValues(id int, name string, page, Stock, cost int, stockCode, isbn, author string) Book {
 	b.ID = id
 	b.Name = name
 	b.Page = page
-	b.Stock = stock
+	b.Stock = Stock
 	b.Cost = cost
 	b.StockCode = stockCode
 	b.ISBN = isbn
@@ -67,6 +66,12 @@ func main() {
 
 		deleteCommand(books)
 
+	} else if flag.Args()[0] == "buy" {
+
+		buyCommand(books)
+
+	} else {
+		usage()
 	}
 
 }
@@ -177,55 +182,42 @@ func deleteCommand(books []Book) {
 
 }
 
-//readFile() function reads json file is named "data.json", checks for errors then returns data is read from json file
-// func readFile() map[string]interface{} {
+//buyCommand decrease stock of book has given ID, then prints the book information
+func buyCommand(books []Book) {
+	if 4 > len(flag.Args()) && len(flag.Args()) > 2 {
+		id, err := strconv.Atoi(flag.Args()[1])
+		quantity, err2 := strconv.Atoi(flag.Args()[2])
 
-// 	data := map[string]interface{}{}
-// 	contents, err := ioutil.ReadFile("data.json")
-// 	if err != nil {
-// 		panic(err)
-// 	}
+		if err != nil || err2 != nil {
+			fmt.Println(err, err2)
+		}
+		flag := []bool{true}
+		for _, value := range books {
 
-// 	if err := json.Unmarshal(contents, &data); err != nil {
-// 		panic(err)
-// 	}
+			if value.ID == id {
 
-// 	return data["psychological thriller movies"].(map[string]interface{})
-// }
+				if (value.Stock - quantity) >= 0 {
+					value.Stock = value.Stock - quantity
+					fmt.Printf("\nID: %d, \nName: %s, \nPage %d,\nStock %d,\nCost %d,\nStock Code: %s,\nISBN %s,\nAuthor %s,\n",
+						value.ID, value.Name, value.Page, value.Stock, value.Cost, value.StockCode, value.ISBN, value.Author)
+				} else {
+					fmt.Printf("There is no enough Stock for ID:%d", value.ID)
+				}
 
-// //listCommand() function is called after "list" command, prints movie list.
-// func listCommand(names map[string]interface{}) {
-// 	fmt.Println("**************Movie List**************")
-// 	for _, movieNames := range names {
+				flag[0] = false
+				break
+			}
 
-// 		movieNames := fmt.Sprintf("%v", movieNames)
+		}
+		if flag[0] {
+			fmt.Println("The book is not found!")
+		}
 
-// 		fmt.Println(movieNames)
-// 	}
-// }
+	}
 
-//searchCommand() function is called after "search" command, checks and prints if the searched movie is in the list.
-// func searchCommand(names map[string]interface{}) {
-// 	args := ""
+}
 
-// 	for i := 2; i < len(os.Args); i++ {
-// 		args = args + " " + string(os.Args[i])
-// 	}
-// 	args = strings.Title(strings.ToLower(args))[1:]
-
-// 	flag := []bool{true}
-// 	for _, movieNames := range names {
-
-// 		movieNames := fmt.Sprintf("%v", movieNames)
-
-// 		if movieNames == args {
-// 			fmt.Printf("The movie is found: %s", movieNames)
-// 			flag[0] = false
-// 			break
-// 		}
-
-// 	}
-// 	if flag[0] {
-// 		fmt.Println("The movie is not found!")
-// 	}
-// }
+//usage prints usage of commnds
+func usage() {
+	fmt.Printf("Usage:\nto show book list -> 'go run main.go list'\nto search book -> 'go run main.go search <bookName>'\nto get book information with ID -> 'go run main.go get <bookID>'\nto delete book with ID -> 'go run main.go delete <bookID>'\nto buy book with ID -> 'go run main.go buy <bookID> <quantity>'")
+}
