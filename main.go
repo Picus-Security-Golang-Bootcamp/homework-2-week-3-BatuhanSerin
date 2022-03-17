@@ -31,14 +31,16 @@ func (b Book) SetValues(id int, name string, page, stock, cost int, stockCode, i
 }
 
 func main() {
-	book1, book2 := Book{}, Book{}
+	book1, book2, book3 := Book{}, Book{}, Book{}
 
 	book1 = book1.SetValues(1, "It", 350, 3, 15, "A125-125-CCD", "1235-4645-1243", "Stephan King")
 	book2 = book2.SetValues(2, "White Fang", 424, 4, 18, "A125-122-CCE", "1235-4645-1243", "Jack London")
+	book3 = book3.SetValues(3, "Harry Potter", 654, 5, 25, "AB13-123-DCE", "1235-4623-1223", "J. K. Rowling")
 
 	var books []Book
 	books = append(books, book1)
 	books = append(books, book2)
+	books = append(books, book3)
 
 	//names := readFile()
 
@@ -59,6 +61,10 @@ func main() {
 	} else if flag.Args()[0] == "get" {
 
 		getCommand(books)
+
+	} else if flag.Args()[0] == "delete" {
+
+		deleteCommand(books)
 
 	}
 
@@ -109,7 +115,7 @@ func searchCommand(books []Book) {
 
 //getCommand finds book by ID and prints
 func getCommand(books []Book) {
-	if len(flag.Args()) > 1 {
+	if 3 > len(flag.Args()) && len(flag.Args()) > 1 {
 
 		args, err := strconv.Atoi(flag.Args()[1])
 
@@ -135,6 +141,39 @@ func getCommand(books []Book) {
 	} else {
 		fmt.Println("'get' command usage: go run main.go get <ID>")
 	}
+}
+
+//deleteCommand deletes book with ID and prints updated list
+func deleteCommand(books []Book) {
+	if 3 > len(flag.Args()) && len(flag.Args()) > 1 {
+		args, err := strconv.Atoi(flag.Args()[1])
+
+		if err != nil {
+			fmt.Println(err)
+
+		}
+		flag := []bool{true}
+		for key, value := range books {
+
+			if value.ID == args {
+				fmt.Printf("\nThe book is deleted(ID:%d): \n", value.ID)
+
+				books = append(books[:key], books[key+1:]...)
+
+				fmt.Printf("\nThe new list: \n")
+				listCommand(books)
+
+				flag[0] = false
+				break
+			}
+
+		}
+		if flag[0] {
+			fmt.Println("The book is not found!")
+		}
+
+	}
+
 }
 
 //readFile() function reads json file is named "data.json", checks for errors then returns data is read from json file
