@@ -12,11 +12,16 @@ go run main.go list
 ```go
 go run main.go search <bookName>
 ```
-The search command is not case sensitive.
+The search command is not sensitive.
 ###### Example
 ```go
-go run main.go search Requiem For A Dream 
-go run main.go search requiem for a dream
+go run main.go search Requiem white fang
+go run main.go search requiem WHiTe FanG
+
+```
+or
+```go
+go run main.go search requiem hite fa
 ```
 ##### 3 - To get book information with ID
 ```go
