@@ -1,10 +1,9 @@
 package main
 
 import (
-	"encoding/json"
 	"flag"
 	"fmt"
-	"io/ioutil"
+	"strconv"
 	"strings"
 )
 
@@ -57,6 +56,10 @@ func main() {
 
 		searchCommand(books)
 
+	} else if flag.Args()[0] == "get" {
+
+		getCommand(books)
+
 	}
 
 }
@@ -73,45 +76,82 @@ func listCommand(books []Book) {
 	}
 }
 
-//searchCommand() function is called after "search" command, checks and prints if the searched book is in the list.
+//searchCommand is called after "search" command, checks and prints if the searched book is in the list.
 func searchCommand(books []Book) {
-	args := ""
+	if len(flag.Args()) > 1 {
 
-	for i := 1; i < len(flag.Args()); i++ {
-		args = args + " " + string(flag.Args()[i])
+		args := ""
+
+		for i := 1; i < len(flag.Args()); i++ {
+			args = args + " " + string(flag.Args()[i])
+		}
+		args = strings.Title(strings.ToLower(args))[1:]
+
+		flag := []bool{true}
+		for _, value := range books {
+
+			if value.Name == args {
+				fmt.Printf("\nThe book is found: %s", value.Name)
+				fmt.Printf("\nID: %d, \nName: %s, \nPage %d,\nStock %d,\nCost %d,\nStock Code: %s,\nISBN %s,\nAuthor %s,\n",
+					value.ID, value.Name, value.Page, value.Stock, value.Cost, value.StockCode, value.ISBN, value.Author)
+				flag[0] = false
+				break
+			}
+
+		}
+		if flag[0] {
+			fmt.Println("The book is not found!")
+		}
+	} else {
+		fmt.Println("'search' command usage: go run main.go search <bookName>")
 	}
-	args = strings.Title(strings.ToLower(args))[1:]
+}
 
-	flag := []bool{true}
-	for _, value := range books {
+//getCommand finds book by ID and prints
+func getCommand(books []Book) {
+	if len(flag.Args()) > 1 {
 
-		if value.Name == args {
-			fmt.Printf("\nThe book is found: %s", value.Name)
-			flag[0] = false
-			break
+		args, err := strconv.Atoi(flag.Args()[1])
+
+		if err != nil {
+			fmt.Println(err)
 		}
 
-	}
-	if flag[0] {
-		fmt.Println("The book is not found!")
+		flag := []bool{true}
+		for _, value := range books {
+
+			if value.ID == args {
+				fmt.Printf("\nThe book ID is found: \n")
+				fmt.Printf("\nID: %d, \nName: %s, \nPage %d,\nStock %d,\nCost %d,\nStock Code: %s,\nISBN %s,\nAuthor %s,\n",
+					value.ID, value.Name, value.Page, value.Stock, value.Cost, value.StockCode, value.ISBN, value.Author)
+				flag[0] = false
+				break
+			}
+
+		}
+		if flag[0] {
+			fmt.Println("The book is not found!")
+		}
+	} else {
+		fmt.Println("'get' command usage: go run main.go get <ID>")
 	}
 }
 
 //readFile() function reads json file is named "data.json", checks for errors then returns data is read from json file
-func readFile() map[string]interface{} {
+// func readFile() map[string]interface{} {
 
-	data := map[string]interface{}{}
-	contents, err := ioutil.ReadFile("data.json")
-	if err != nil {
-		panic(err)
-	}
+// 	data := map[string]interface{}{}
+// 	contents, err := ioutil.ReadFile("data.json")
+// 	if err != nil {
+// 		panic(err)
+// 	}
 
-	if err := json.Unmarshal(contents, &data); err != nil {
-		panic(err)
-	}
+// 	if err := json.Unmarshal(contents, &data); err != nil {
+// 		panic(err)
+// 	}
 
-	return data["psychological thriller movies"].(map[string]interface{})
-}
+// 	return data["psychological thriller movies"].(map[string]interface{})
+// }
 
 // //listCommand() function is called after "list" command, prints movie list.
 // func listCommand(names map[string]interface{}) {
