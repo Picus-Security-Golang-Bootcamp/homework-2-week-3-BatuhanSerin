@@ -16,10 +16,14 @@ type Book struct {
 	Cost      int
 	StockCode string
 	ISBN      string
-	Author    string
+	Author    struct {
+		ID   int
+		Name string
+	}
 }
 
-func (b Book) SetValues(id int, name string, page, stock, cost int, stockCode, isbn, author string) Book {
+//SetValues set book values
+func (b Book) SetValues(id int, name string, page, stock, cost int, stockCode, isbn string, authorId int, authorName string) Book {
 	b.ID = id
 	b.Name = name
 	b.Page = page
@@ -27,7 +31,8 @@ func (b Book) SetValues(id int, name string, page, stock, cost int, stockCode, i
 	b.Cost = cost
 	b.StockCode = stockCode
 	b.ISBN = isbn
-	b.Author = author
+	b.Author.ID = authorId
+	b.Author.Name = authorName
 	return b
 }
 
@@ -35,9 +40,9 @@ func main() {
 
 	book1, book2, book3 := Book{}, Book{}, Book{}
 
-	book1 = book1.SetValues(1, "It", 350, 3, 15, "A125-125-CCD", "1235-4645-1243", "Stephan King")
-	book2 = book2.SetValues(2, "White Fang", 424, 4, 18, "A125-122-CCE", "1235-4645-1243", "Jack London")
-	book3 = book3.SetValues(3, "Harry Potter", 654, 5, 25, "AB13-123-DCE", "1235-4623-1223", "J. K. Rowling")
+	book1 = book1.SetValues(1, "It", 350, 3, 15, "A125-125-CCD", "1235-4645-1243", 2, "Stephan King")
+	book2 = book2.SetValues(2, "White Fang", 424, 4, 18, "A125-122-CCE", "1235-4645-1243", 5, "Jack London")
+	book3 = book3.SetValues(3, "Harry Potter", 654, 5, 25, "AB13-123-DCE", "1235-4623-1223", 1, "J. K. Rowling")
 
 	var books []Book
 	books = append(books, book1)
@@ -78,15 +83,19 @@ func main() {
 
 }
 
+//getValues print elements of given struct
+func getValues(value Book) {
+	fmt.Printf("\nID: %d, \nName: %s, \nPage %d,\nStock %d,\nCost %d,\nStock Code: %s,\nISBN %s,\nAuthor %d %s,\n",
+		value.ID, value.Name, value.Page, value.Stock, value.Cost, value.StockCode, value.ISBN, value.Author.ID, value.Author.Name)
+}
+
 //listCommand() function is called after "list" command, prints movie list.
 func listCommand(books []Book) {
 	fmt.Printf("\n**************Book List**************")
 
 	for _, value := range books {
 
-		fmt.Printf("\nID: %d, \nName: %s, \nPage %d,\nStock %d,\nCost %d,\nStock Code: %s,\nISBN %s,\nAuthor %s,\n",
-			value.ID, value.Name, value.Page, value.Stock, value.Cost, value.StockCode, value.ISBN, value.Author)
-
+		getValues(value)
 	}
 }
 
@@ -106,18 +115,17 @@ func searchCommand(books []Book) {
 
 			if strings.ToLower(value.Name) == args {
 				fmt.Printf("\nThe book is found: %s", value.Name)
-				fmt.Printf("\nID: %d, \nName: %s, \nPage %d,\nStock %d,\nCost %d,\nStock Code: %s,\nISBN %s,\nAuthor %s,\n",
-					value.ID, value.Name, value.Page, value.Stock, value.Cost, value.StockCode, value.ISBN, value.Author)
+				getValues(value)
 				flag[0] = false
-			} else if strings.Contains(value.Name, args) {
+			} else if strings.Contains(strings.ToLower(value.Name), args) {
 				fmt.Printf("\n%s includes %s\n", value.Name, args)
-				fmt.Printf("\nID: %d, \nName: %s, \nPage %d,\nStock %d,\nCost %d,\nStock Code: %s,\nISBN %s,\nAuthor %s,\n",
-					value.ID, value.Name, value.Page, value.Stock, value.Cost, value.StockCode, value.ISBN, value.Author)
+				getValues(value)
 				flag[0] = false
 			}
 
 		}
 		if flag[0] {
+
 			fmt.Println("The book is not found!")
 
 		}
@@ -141,8 +149,7 @@ func getCommand(books []Book) {
 
 			if value.ID == args {
 				fmt.Printf("\nThe book ID is found: \n")
-				fmt.Printf("\nID: %d, \nName: %s, \nPage %d,\nStock %d,\nCost %d,\nStock Code: %s,\nISBN %s,\nAuthor %s,\n",
-					value.ID, value.Name, value.Page, value.Stock, value.Cost, value.StockCode, value.ISBN, value.Author)
+				getValues(value)
 				flag[0] = false
 				break
 			}
@@ -207,8 +214,7 @@ func buyCommand(books []Book, mux *sync.Mutex) {
 					mux.Lock()
 					value.Stock = value.Stock - quantity
 					mux.Unlock()
-					fmt.Printf("\nID: %d, \nName: %s, \nPage %d,\nStock %d,\nCost %d,\nStock Code: %s,\nISBN %s,\nAuthor %s,\n",
-						value.ID, value.Name, value.Page, value.Stock, value.Cost, value.StockCode, value.ISBN, value.Author)
+					getValues(value)
 				} else {
 					fmt.Printf("There is no enough Stock for ID:%d", value.ID)
 				}
